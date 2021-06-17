@@ -1,0 +1,47 @@
+stages:
+  -stage: validate
+  jobs:
+    -job: validate
+     continueOnError: false
+     steps:
+      -task: TerraformInstall
+       input: 
+        terraform version = " 0.12.26"
+      
+      -task: Terraform Task
+      displayname : 'init'
+      input:
+        provider: 'azurerm'
+        command: 'init'
+        backendservicearm: 'azure-spn'
+        backendAzureRmResoursegroupName: ''
+        backendAzureRmStorageAccount: ''
+        backendAzureRmContainerName: ''
+        backendAzureRmKey: ''
+      
+      -task: Terraform task validate
+      displayname: ''
+      input:
+        provider: 'azurerm'
+        command: 'validate'
+ 
+ -stage: deploy
+  jobs:
+    -job: Terraform Install
+      -task: Terraform task
+       displayname: 'plan'
+        input: 
+          provider: 'azurerm'
+          command: 'plan'
+          environmentServiceNameAzureRm: ''
+          
+     
+     
+     -task: Terraform task
+       displayname: 'apply'
+        input: 
+          provider: 'azurerm'
+          command: 'apply'
+          environmentServiceNameAzureRm: ''
+          
+     
